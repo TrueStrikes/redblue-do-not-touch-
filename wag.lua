@@ -3,9 +3,6 @@
 local HttpService = game:GetService("HttpService")
 local GuiService = game:GetService("GuiService")
 
-local botToken = "YOUR_BOT_TOKEN_HERE"
-local channelId = "YOUR_CHANNEL_ID_HERE"
-
 local processedMessageIds = {}
 local openLinks = true
 local lastClipboard = ""
@@ -24,7 +21,7 @@ local function retrieveLatestMessage()
         })
     end)
 
-    if success then
+    if success and response.Body then
         local jsonResponse = HttpService:JSONDecode(response.Body)
         return jsonResponse[1]
     else
@@ -40,11 +37,7 @@ local function extractGameId(url)
 end
 
 local function updateDisplay(author, content)
-    -- Check if author and content are not nil before formatting the string
-    author = author or "Unknown"
-    content = content or "No content"
-
-    print(string.format("Author: %s\nContent: %s", author, content))
+    print(string.format("Author: %s\nContent: %s", author or "Unknown", content or "No Content"))
 end
 
 local function openRobloxUrl(gameId)
@@ -58,7 +51,7 @@ while true do
     if latestMessage and not processedMessageIds[latestMessage.id] then
         processedMessageIds[latestMessage.id] = true
 
-        local author = string.format("Author: %s#%s", latestMessage.author.username, latestMessage.author.discriminator)
+        local author = latestMessage.author and string.format("Author: %s#%s", latestMessage.author.username, latestMessage.author.discriminator) or "Unknown Author"
         local content = "Content: " .. tostring(latestMessage.content or "")
 
         updateDisplay(author, content)
@@ -78,7 +71,7 @@ while true do
                     end
                 end
 
-                local gameId = extractGameId(embed.fields[1].value)
+                local gameId = embed.fields and extractGameId(embed.fields[1].value)
                 if gameId then
                     print("  Game ID:", gameId)
                     openRobloxUrl(gameId)
