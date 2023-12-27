@@ -3,6 +3,9 @@
 local HttpService = game:GetService("HttpService")
 local GuiService = game:GetService("GuiService")
 
+local botToken = "YOUR_BOT_TOKEN_HERE"
+local channelId = "YOUR_CHANNEL_ID_HERE"
+
 local processedMessageIds = {}
 local openLinks = true
 local lastClipboard = ""
@@ -37,6 +40,10 @@ local function extractGameId(url)
 end
 
 local function updateDisplay(author, content)
+    -- Check if author and content are not nil before formatting the string
+    author = author or "Unknown"
+    content = content or "No content"
+
     print(string.format("Author: %s\nContent: %s", author, content))
 end
 
